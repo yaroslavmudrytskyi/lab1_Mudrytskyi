@@ -1,0 +1,93 @@
+import kotlin.coroutines.EmptyCoroutineContext.get
+
+abstract class Employee(
+    val firstName: String,
+    val lastName: String,
+    var salary: Double,
+    var experience: Int
+) {
+    open fun salaryAll (): Double {
+        var getsalary: Any = 0
+            return (if (this.experience > 2)) {
+                this.salary + 200
+            }
+            else if (this.experience > 5) {
+            (this.salary * 1.2) + 500
+            }
+            else {
+            this.salary
+        }
+}
+
+class Developer(
+    firstName: String,
+    lastName: String,
+    salary: Double,
+    experience: Int
+) : Employee(firstName, lastName, salary, experience)
+
+class Designer(
+    firstName: String,
+    lastName: String,
+    salary: Double,
+    experience: Int,
+    var effcoef: Double
+) : Employee(firstName, lastName, salary, experience){
+    override fun salaryAll (): Double {
+        return super.salaryAll() * effcoef
+    }
+}
+
+class Manager(
+    firstName: String,
+    lastName: String,
+    salary: Double,
+    experience: Int,
+    var team: MutableList<Employee> = mutableListOf()
+) : Employee(firstName, lastName, salary, experience){
+    override fun salaryAll (): Double {
+        val devCount = team.filterIsInstance<Developer>().count()
+        val resultOf = 0.0
+        return (if (this.devCount > 5)) {
+            this.salary + 200
+        }
+        else if (this.devCount > 10) {
+            this.salary + 500
+        }
+        else if (devCount > (devCount/2)){
+            this.salary * 1.1
+        }
+        else {
+            this.salary
+        }
+}
+
+class Department(
+    var managers: MutableList<Manager> = mutableListOf()
+) {
+    fun giveAllSalary(){
+        managers.forEach { manager ->
+            manager.salaryAll()
+            manager.team.forEach { employee ->
+                employee.salaryAll()
+            }
+        }
+    }
+}
+
+fun main() {
+    val dev1 = Developer("Ilya", "Dev1", 1.0, 1 )
+    val dev2 = Developer("Akakiy", "Dev2", 2.0, 2 )
+    val des1 = Designer("Artyom", "Des1", 1.0, 1, 0.5)
+    val des2 = Designer("Yosup", "Des2", 2.0, 2, 0.8)
+    val manager1 = Manager("Pavel", "Man1", 2.5, 2)
+    manager1.team.add(dev1)
+    manager1.team.add(des1)
+    val manager2 = Manager("Ivan", "Man2", 3.5, 3)
+    manager2.team.add(dev2)
+    manager2.team.add(des2)
+    val department = Department()
+    department.giveAllSalary()
+
+    println("@firstName@ @lastName@ got salary: @salary@")
+}
